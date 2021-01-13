@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemSize {
-    private readonly int[,] sizes = new int[,] {
-        {1, 1}, //Empty
-        {1, 1}, //Food
-        {1, 1}, //Water
-        {2, 1}, //Pistol
-        {3, 1}, //Rifle
-        {3, 1} //Shotgun
+    private static readonly int[][] sizes = new int[][] {
+        new int[] {1, 1}, //Empty
+        new int[] {1, 1}, //Food
+        new int[] {1, 1}, //Water
+        new int[] {2, 1}, //Pistol
+        new int[] {3, 1}, //Rifle
+        new int[] {3, 1} //Shotgun
     };
 
-    public int[] Get(Item item) {
+    public static int[] Get(Item item) {
         return sizes[(int)item];
     }
     

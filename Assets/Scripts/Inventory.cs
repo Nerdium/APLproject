@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 using System;
+using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour {
      
@@ -14,7 +15,7 @@ public class Inventory : MonoBehaviour {
     [SerializeField]
     private int gridHeight = 3;
 
-    private List<GameObject> gridItems = new List<GameObject>();
+    private List<ItemIcon> gridItems = new List<ItemIcon>();
     private int[] itemIndices;
 
     private Slot primarySlot, secondarySlot;
@@ -40,12 +41,32 @@ public class Inventory : MonoBehaviour {
     private void Add(GameObject obj) {
         Item type = obj.GetComponent<Pickup>().type;
         print(itemTextures[(int)type]);
-        print(ItemSize.Get(type));
+        int[] size = ItemSize.Get(type);
+        GetOpenPosition(size);
+    }
+    
+    private void UpdateItemIcons(GameObject obj) {
+        ItemIcon icon = new ItemIcon();
+        icon.image = new GameObject();
+        icon.image.AddComponent(typeof(RawImage));
+        icon.image.texture = itemTextures[(int)type];
+        icon.image.rectTransform
     }
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.tag == "Pickup") {
             Add(other.gameObject);
         }
+    }
+
+    private int[] GetOpenPosition(int[] size) {
+        //print(gridWidth - size[0]);
+        //print(gridHeight - size[1]);
+        for(int i = 0; i < gridWidth - size[0]; i++) {
+            for(int j = 0; j < gridHeight - size[1]; j++) {
+                print(i + ", " + j);
+            }
+        }
+        return new int[] {0, 0};
     }
 }

@@ -9,6 +9,7 @@ public class Gun : MonoBehaviour {
     public float fireRate = 15.0f;
     public float impactForce = 1000.0f;
     public float variance = 100.0f;
+    public float muzzleVeloctiy = 100.0f;
 
     public ParticleSystem muzzleFlash;
     public Transform gunEnd;
@@ -55,14 +56,18 @@ public class Gun : MonoBehaviour {
         points.Add(rayOrigin);
         bool isHit = false;
 
+        
+
         int i = 1;
         while(!isHit && i < 100) {
             RaycastHit hit;
             points.Add(points[i - 1] + direction.normalized * range);
             if(Physics.Raycast(points[i], Quaternion.Euler(bulletSpread[0], bulletSpread[1], 0.0f) * fpsCam.transform.forward, out hit, range)) {
                 isHit = true;
-                GameObject decalObject = Instantiate(decalPrefab, hit.point + (hit.normal * 0.025f), Quaternion.FromToRotation(Vector3.up, hit.normal), decalHolder.transform);
-
+                Vector3 scale = decalPrefab.transform.localScale;
+                GameObject decalObject = Instantiate(decalPrefab, hit.point + (hit.normal * 0.025f), Quaternion.FromToRotation(Vector3.up, hit.normal));
+                decalObject.transform.SetParent(hit.transform, true);
+                Object.Destroy(decalObject, 5.0f);
             }
             i++;
         }
@@ -70,7 +75,7 @@ public class Gun : MonoBehaviour {
         laserLine.positionCount = points.Count;
         laserLine.SetPositions(points.ToArray());
 
-        /*s
+        /*
         if(Physics.Raycast(rayOrigin, Quaternion.Euler(bulletSpread[0], bulletSpread[1], 0.0f) * fpsCam.transform.forward, out hit, range)) {
             //laserLine.SetPosition (0, gunEnd.position);
             //laserLine.SetPosition (1, hit.point);
@@ -86,6 +91,10 @@ public class Gun : MonoBehaviour {
             }
         }
         */
+    }
+
+    private void GetPosition(float totalDistance) {
+        float t = totalDistance / muzzleVeloctiy;
     }
 
     public static float[] GetSpread(float variance) {

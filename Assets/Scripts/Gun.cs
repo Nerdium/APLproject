@@ -24,11 +24,11 @@ public class Gun : MonoBehaviour {
     private Item active;
 
     void Start() {
-        laserLine = GetComponent<LineRenderer>();
+        //laserLine = GetComponent<LineRenderer>();
         fpsCam = GetComponentInParent<Camera>();
 
-        laserLine.startWidth = 0.1f;
-        laserLine.enabled = true;
+        //laserLine.startWidth = 0.1f;
+        //laserLine.enabled = true;
 
         
     }
@@ -83,8 +83,8 @@ public class Gun : MonoBehaviour {
             i++;
         }
         //print(points.Count);
-        laserLine.positionCount = points.Count;
-        laserLine.SetPositions(points.ToArray());
+        //laserLine.positionCount = points.Count;
+        //laserLine.SetPositions(points.ToArray());
 
         /*
         if(Physics.Raycast(rayOrigin, Quaternion.Euler(bulletSpread[0], bulletSpread[1], 0.0f) * fpsCam.transform.forward, out hit, range)) {

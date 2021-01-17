@@ -6,11 +6,14 @@ using UnityEngine.UI;
 public class ItemIcon : MonoBehaviour {
     
     public GameObject item;
+    public int index;
 
-    public static ItemIcon Create(Transform parent, GameObject item, int[] guiVals, Texture texture, string name) {
+    public static ItemIcon Create(Transform parent, GameObject item, int[] guiVals, Texture texture, string name, int index) {
         GameObject obj = new GameObject(name);
         obj.transform.parent = parent;
         ItemIcon itemIcon = obj.AddComponent<ItemIcon>();
+
+        itemIcon.index = index;
 
         itemIcon.item = item;
         item.transform.parent = obj.transform;

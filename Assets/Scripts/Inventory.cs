@@ -22,27 +22,31 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
 
     private Slot primarySlot, secondarySlot;
 
+    public Camera camera;
+
     public Texture[] itemTextures = new Texture[Enum.GetValues(typeof(Item)).Length];
 
-    private void Start() {
-        inventory = transform.Find("Inventory").gameObject;
-        canvas = inventory.GetComponent<Canvas>();
-        itemHolder = inventory.transform.Find("Items");
+    private int nextIndex = 1;
 
-        items = new List<ItemIcon>();
-        gridIndices = new int[gridWidth, gridHeight];
-        
+    private void Start() {
+      inventory = transform.Find("Inventory").gameObject;
+      canvas = inventory.GetComponent<Canvas>();
+      itemHolder = inventory.transform.Find("Items");
+
+      items = new List<ItemIcon>();
+      gridIndices = new int[gridWidth, gridHeight];
     }
 
     private void Update() {
         if(Input.GetKeyDown(KeyCode.Tab)) {
             canvas.enabled = !canvas.enabled;
-            GetComponent<RigidbodyFirstPersonController>().mouseLook.SetCursorLock(!canvas.enabled);
-            GetComponent<RigidbodyFirstPersonController>().enabled = !canvas.enabled;
+            Cursor.lockState = canvas.enabled ? CursorLockMode.None : CursorLockMode.Locked; 
+            Cursor.visible = canvas.enabled;
+            GetComponent<FirstPersonAIO>().fps_Rigidbody.velocity = Vector3.zero;
+            GetComponent<FirstPersonAIO>().enabled = !canvas.enabled;
         }
-    }
 
-    
+    }
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.tag == "Pickup") {
@@ -61,11 +65,12 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
       print(size[0] + ", " + size[1]);
       int[] guiVals = new int[] {pos[0] * 100, pos[1] * 100, size[0] * 100, size[1] * 100};
 
-      ItemIcon objIcon = ItemIcon.Create(itemHolder, obj, guiVals, itemTextures[(int)(pickup.type)], ItemName.Get(pickup.type));
+      ItemIcon objIcon = ItemIcon.Create(itemHolder, obj, guiVals, itemTextures[(int)(pickup.type)], ItemName.Get(pickup.type), nextIndex);
       //objIcon.gameObject.transform.parent = transform;
 
       items.Add(objIcon);
-      AddToGrid(items.Count, pos, size);
+      AddToGrid(nextIndex, pos, size);
+      nextIndex++;
     }
 
     //Finds the first position where rect of the given size is empty
@@ -104,8 +109,34 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
       }
     }
 
+    private void RemoveFromGrid(int index) {
+      for(int i = 0; i < gridWidth; i++) {
+        for(int j = 0; j < gridHeight; j++) {
+          if(gridIndices[i, j] == index) {
+            gridIndices[i, j] = 0;
+          }
+        }
+      }
+    }
+
+    private ItemIcon GetFromIndex(int index) {
+      foreach(ItemIcon item in items) {
+        if(item.index == index) {
+          return item;
+        }
+      }
+      return null;
+    }
+
     public void OnPointerClick(PointerEventData eventData) {
-        Debug.Log("Clicked: " + eventData.pointerCurrentRaycast.gameObject.name);
-        
+      ItemIcon item = eventData.pointerCurrentRaycast.gameObject.GetComponent<ItemIcon>();
+      print(item);
+      if(item) {
+        RemoveFromGrid(item.index);
+        items.Remove(item);
+        item.item.transform.parent = null;
+        print(gameObject.transform.parent);
+        item.item.transform.position = transform.parent.position + camera.transform.forward * 5.0f;
+      }
     }
 }

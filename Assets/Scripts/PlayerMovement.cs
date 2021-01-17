@@ -158,7 +158,7 @@ namespace Movement
             PlayerJump(playerJumpForce, appliedForceMode);
             m_playerIsGrounded = false;
             m_playerJumpStarted = false;
-            yield return new WaitUntil(() => !playerIsJumping);
+            yield return new WaitUntil(() => playerIsJumping);
             ++m_currentNumberOfJumpsMade;
             m_playerJumpStarted = true;
         }

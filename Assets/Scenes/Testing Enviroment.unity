@@ -7385,7 +7385,7 @@ Transform:
   m_GameObject: {fileID: 1033806714820568413}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 5.79, z: 0}
-  m_LocalScale: {x: 0.14379, y: 0.14379, z: 0.14379}
+  m_LocalScale: {x: 0.31948408, y: 0.31948408, z: 0.31948408}
   m_Children:
   - {fileID: 69967666}
   - {fileID: 382998389}
@@ -7484,12 +7484,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 382503285}
   movementSettings:
-    ForwardSpeed: 8
-    BackwardSpeed: 4
-    StrafeSpeed: 4
+    ForwardSpeed: 12
+    BackwardSpeed: 6
+    StrafeSpeed: 6
     RunMultiplier: 2
     RunKey: 304
-    JumpForce: 50
+    JumpForce: 100
     SlopeCurveModifier:
       serializedVersion: 2
       m_Curve:

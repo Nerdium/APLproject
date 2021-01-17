@@ -6,9 +6,9 @@ public class Gun : MonoBehaviour {
 
     public float damage = 10.0f;
     //public float range = 100.0f;
-    public float fireRate = 15.0f;
+    public float fireRate = 100.0f;
     public float impactForce = 1000.0f;
-    public float variance = 100.0f;
+    public float variance = 0.1f;
     public float muzzleVeloctiy = 100.0f;
 
     public ParticleSystem muzzleFlash;
@@ -21,6 +21,8 @@ public class Gun : MonoBehaviour {
     private Camera fpsCam;   
     private LineRenderer laserLine;
 
+    private Item active;
+
     void Start() {
         laserLine = GetComponent<LineRenderer>();
         fpsCam = GetComponentInParent<Camera>();
@@ -32,11 +34,9 @@ public class Gun : MonoBehaviour {
     }
 
     void Update() {
-        if(Input.GetButtonDown("Fire1") && Time.time > nextTimeToFire) {
+        if(Input.GetButton("Fire1") && Time.time > nextTimeToFire) {
             nextTimeToFire = Time.time + 1 / fireRate;
-            for(int i = 0; i < 100; i++) {  
-                Shoot();
-            }
+            Shoot();
             
         }
     }
@@ -44,9 +44,10 @@ public class Gun : MonoBehaviour {
     void Shoot() {
         muzzleFlash.Play();
 
-        float range = 1.0f;
+        float range = 100.0f;
 
         Vector3 rayOrigin = fpsCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
+
         float[] bulletSpread = GetSpread(variance);
 
         Vector3 direction = Quaternion.Euler(bulletSpread[0], bulletSpread[1], 0.0f) * fpsCam.transform.forward;
@@ -56,22 +57,32 @@ public class Gun : MonoBehaviour {
         points.Add(rayOrigin);
         bool isHit = false;
 
-        
+        //Quaternion.Euler(bulletSpread[0], bulletSpread[1], 0.0f) * 
+
+        RaycastHit hit;
+        if(Physics.Raycast(rayOrigin, direction, out hit, range)) {
+                //print(hit.point);
+                //isHit = true;
+                
+                GameObject decalObject = Instantiate(decalPrefab, hit.point + (hit.normal * 0.0025f), Quaternion.FromToRotation(Vector3.up, hit.normal));
+                decalObject.transform.SetParent(hit.transform, true);
+                Object.Destroy(decalObject, 5.0f);
+                if(hit.rigidbody) {
+                    hit.rigidbody.AddForce(-hit.normal * impactForce);
+                }
+            }
+
 
         int i = 1;
         while(!isHit && i < 100) {
-            RaycastHit hit;
-            points.Add(points[i - 1] + direction.normalized * range);
-            if(Physics.Raycast(points[i], Quaternion.Euler(bulletSpread[0], bulletSpread[1], 0.0f) * fpsCam.transform.forward, out hit, range)) {
-                isHit = true;
-                Vector3 scale = decalPrefab.transform.localScale;
-                GameObject decalObject = Instantiate(decalPrefab, hit.point + (hit.normal * 0.025f), Quaternion.FromToRotation(Vector3.up, hit.normal));
-                decalObject.transform.SetParent(hit.transform, true);
-                Object.Destroy(decalObject, 5.0f);
-            }
+            
+            //points.Add(points[i - 1] + direction.normalized * range);
+            
+
+
             i++;
         }
-        print(points.Count);
+        //print(points.Count);
         laserLine.positionCount = points.Count;
         laserLine.SetPositions(points.ToArray());
 
@@ -86,9 +97,7 @@ public class Gun : MonoBehaviour {
                 target.TakeDamage(damage);
             }
 
-            if(hit.rigidbody) {
-                hit.rigidbody.AddForce(-hit.normal * impactForce);
-            }
+            
         }
         */
     }

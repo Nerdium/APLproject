@@ -5,25 +5,32 @@ using UnityEngine.UI;
 
 public class ItemIcon : MonoBehaviour {
     
-    public GameObject item;
+    public Item item;
     public int index;
 
-    public static ItemIcon Create(Transform parent, GameObject item, int[] guiVals, Texture texture, string name, int index) {
+    public static ItemIcon Create(Transform parent, GameObject itemObj, int[] guiVals, Texture texture, string name, int index) {
         GameObject obj = new GameObject(name);
-        obj.transform.parent = parent;
         ItemIcon itemIcon = obj.AddComponent<ItemIcon>();
 
         itemIcon.index = index;
 
-        itemIcon.item = item;
-        item.transform.parent = obj.transform;
-        item.SetActive(false);
+        itemIcon.item = itemObj.GetComponent<Pickup>().type;
+        Object.Destroy(itemObj);
 
         RawImage image = obj.AddComponent<RawImage>();
         image.texture = texture;
-        
-        RectTransform rectTransform = obj.GetComponent<RectTransform>();
-        rectTransform.rotation = parent.rotation;
+
+        SetTransform(obj, parent, guiVals);
+
+
+        return itemIcon;
+    }
+
+    public static void SetTransform(GameObject icon, Transform parent, int[] guiVals) {
+        icon.transform.SetParent(parent);
+
+        RectTransform rectTransform = icon.GetComponent<RectTransform>();
+        rectTransform.rotation = icon.transform.parent.rotation;
         rectTransform.localScale = new Vector3(1.0f, 1.0f, 0.0f);
 
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, guiVals[2]);
@@ -35,9 +42,6 @@ public class ItemIcon : MonoBehaviour {
         rectTransform.pivot = new Vector2(0.0f, 1.0f);
         
         rectTransform.anchoredPosition = new Vector3(guiVals[0], -guiVals[1], 0.0f);
-
-
-        return itemIcon;
     }
 
     private void Update() {

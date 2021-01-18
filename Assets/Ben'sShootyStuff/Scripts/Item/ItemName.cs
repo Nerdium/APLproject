@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ItemName {
     private static readonly string[] names = new string[] {
-        "Empty",
+        "Ammo",
         "Food",
         "Water",
         "Pistol",

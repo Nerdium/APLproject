@@ -20,11 +20,20 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
     private List<ItemIcon> items;
     private int[,] gridIndices;
 
-    private Slot primarySlot, secondarySlot;
+    private ItemIcon equipped;
+    public GameObject decalPrefab;
+    
+    public float rifleFireRate = 15.0f;
+    public float shotgunFireRate = 0.25f;
+    public float gunVariance = 0.1f;
+    private float nextTimeToFireRifle;
+    private float nextTimeToFireShotgun;
 
     public Camera camera;
+    public Transform hand;
 
     public Texture[] itemTextures = new Texture[Enum.GetValues(typeof(Item)).Length];
+    public GameObject[] itemPickups = new GameObject[Enum.GetValues(typeof(Item)).Length];
 
     private int nextIndex = 1;
 
@@ -44,6 +53,37 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
             Cursor.visible = canvas.enabled;
             GetComponent<FirstPersonAIO>().fps_Rigidbody.velocity = Vector3.zero;
             GetComponent<FirstPersonAIO>().enabled = !canvas.enabled;
+
+            nextTimeToFireRifle = Time.time;
+            nextTimeToFireShotgun = Time.time;
+        }
+
+        if(equipped) {
+          switch(equipped.item) {
+            case Item.RIFLE:
+              if(Input.GetButton("Fire1") && Time.time > nextTimeToFireRifle) {
+                nextTimeToFireRifle = Time.time + 1 / rifleFireRate;
+                hand.GetChild(0).GetComponent<Gun>().Shoot(1, gunVariance * 6);
+            
+              }
+              break;
+            
+            case Item.PISTOL:
+              if(Input.GetButtonDown("Fire1")) {
+                hand.GetChild(0).GetComponent<Gun>().Shoot(1, gunVariance);
+            
+              }
+            break;
+
+            case Item.SHOTGUN:
+              if(Input.GetButtonDown("Fire1") && Time.time > nextTimeToFireShotgun) {
+                nextTimeToFireShotgun = Time.time + 1 / shotgunFireRate;
+                hand.GetChild(0).GetComponent<Gun>().Shoot(20, gunVariance * 30);
+            
+              }
+              break;
+            
+          }
         }
 
     }
@@ -55,12 +95,12 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
     }
 
     //Adds an item to inventory if possible
-    private void AddToInventory(GameObject obj) {
+    private bool AddToInventory(GameObject obj) {
       Pickup pickup = obj.GetComponent<Pickup>();
       int[] size = ItemSize.Get(pickup.type);
       int[] pos = GetOpenPosition(size);
       if(pos[0] == -1) {
-        return;
+        return false;
       }
       print(size[0] + ", " + size[1]);
       int[] guiVals = new int[] {pos[0] * 100, pos[1] * 100, size[0] * 100, size[1] * 100};
@@ -71,6 +111,7 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
       items.Add(objIcon);
       AddToGrid(nextIndex, pos, size);
       nextIndex++;
+      return true;
     }
 
     //Finds the first position where rect of the given size is empty
@@ -128,15 +169,76 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
       return null;
     }
 
+    private void DropItem(ItemIcon item) {
+      RemoveFromGrid(item.index);
+      items.Remove(item);
+
+      Vector3 front = transform.position + camera.transform.forward * 10.0f;
+      GameObject newPickup = Instantiate(itemPickups[(int)(item.item)], new Vector3(front.x, 10.0f, front.z), Quaternion.identity);
+      Destroy(item.gameObject);
+    }
+
+    private void MoveOrDrop(ItemIcon item) {
+      int[] size = ItemSize.Get(item.item);
+      int[] pos = GetOpenPosition(size);
+
+      if(pos[0] == -1) {
+        print("dropping");
+        DropItem(item);
+        equipped = null;
+        Destroy(hand.transform.GetChild(0));
+      } else {
+        print("moving");
+        int[] guiVals = new int[] {pos[0] * 100, pos[1] * 100, size[0] * 100, size[1] * 100};
+        ItemIcon.SetTransform(item.gameObject, itemHolder, guiVals);
+        items.Add(item);
+        AddToGrid(nextIndex, pos, size);
+        nextIndex++;
+      }
+    }
+
     public void OnPointerClick(PointerEventData eventData) {
       ItemIcon item = eventData.pointerCurrentRaycast.gameObject.GetComponent<ItemIcon>();
-      print(item);
+      //print(item);
       if(item) {
-        RemoveFromGrid(item.index);
-        items.Remove(item);
-        item.item.transform.parent = null;
-        print(gameObject.transform.parent);
-        item.item.transform.position = transform.parent.position + camera.transform.forward * 5.0f;
+        if(eventData.button == PointerEventData.InputButton.Right) {
+          DropItem(item);
+          print(item);
+
+        } else {
+          print(equipped);
+          if(item == equipped) {
+            DropItem(item);
+            equipped = null;
+            print(hand.transform.GetChild(0).gameObject);
+            Destroy(hand.transform.GetChild(0).gameObject);
+          } else {
+
+            if(equipped) {
+              MoveOrDrop(equipped); 
+            }
+
+
+            equipped = item;
+            GameObject obj = Instantiate(itemPickups[(int)(item.item)], hand);
+            obj.GetComponent<Rigidbody>().isKinematic = true;
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+            if(item.item == Item.PISTOL || item.item == Item.SHOTGUN || item.item == Item.RIFLE) {
+              Gun gun = obj.AddComponent<Gun>();
+              gun.decalPrefab = decalPrefab;
+            }
+            BoxCollider[] colliders = obj.GetComponents<BoxCollider>();
+            foreach(BoxCollider collider in colliders) {
+              collider.enabled = false;
+            }
+            RemoveFromGrid(item.index);
+            item.gameObject.transform.SetParent(inventory.transform.Find("ActiveItemHolder"));
+            item.transform.localPosition = new Vector3(-50.0f, 50.0f, 0.0f);
+          }
+          
+          
+        }
       }
     }
 }

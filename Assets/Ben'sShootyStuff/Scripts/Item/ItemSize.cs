@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ItemSize {
     private static readonly int[][] sizes = new int[][] {
-        new int[] {1, 1}, //Empty
+        new int[] {1, 1}, //Ammo
         new int[] {1, 1}, //Food
         new int[] {1, 2}, //Water
         new int[] {2, 1}, //Pistol

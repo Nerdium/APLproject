@@ -6,6 +6,7 @@ public class Target : MonoBehaviour {
     
     public static int kills = 0;
     public GameObject canvas;
+    public GameObject player;
     public float health = 100.0f;
     public bool respawn = false;
 
@@ -23,9 +24,9 @@ public class Target : MonoBehaviour {
         } else {
             kills++;
             canvas.transform.Find("Text").GetComponent<Text>().text = "Kills: " + kills + "/10";
-            //.Find("Text").GetComponent<Text>().text =
             if(kills == 10) {
-
+                player.GetComponent<Inventory>().enabled = false;
+                canvas.transform.Find("End").gameObject.SetActive(true);
             }
         }
     }

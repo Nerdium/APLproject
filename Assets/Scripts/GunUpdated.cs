@@ -12,7 +12,7 @@ public class GunUpdated : MonoBehaviour
     public float impactForce = 1000.0f;
     public bool isFiring;
     public int currentAmmo;
-    public final maxAmmo = 30;
+    public int maxAmmo = 30;
     public float variance = 100.0f;
     public float muzzleVeloctiy = 100.0f;
     public ParticleSystem muzzleFlash;

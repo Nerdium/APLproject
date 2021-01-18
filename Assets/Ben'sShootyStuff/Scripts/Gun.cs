@@ -13,7 +13,7 @@ public class Gun : MonoBehaviour {
 
     public GameObject decalPrefab;
 
-    private float nextTimeToFire = 0.0f;
+    //private float nextTimeToFire = 0.0f;
 
     private Camera fpsCam;   
     private LineRenderer laserLine;

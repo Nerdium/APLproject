@@ -57,6 +57,10 @@ public class Gun : MonoBehaviour {
                     if(hit.rigidbody) {
                         hit.rigidbody.AddForce(-hit.normal * impactForce);
                     }
+                    Target target = hit.collider.gameObject.GetComponent<Target>();
+                    if(target) {
+                        target.TakeDamage(10);
+                    }
                 }
 
         }

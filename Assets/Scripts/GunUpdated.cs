@@ -61,7 +61,7 @@ public class GunUpdated : MonoBehaviour
     void Shoot()
     {
 
-        if (Input.GetButtonDown(0) && !isFiring && currentAmmo > 0)
+        if (Input.GetButtonDown("Fire1") && !isFiring && currentAmmo > 0)
         {
 
             currentAmmo--;

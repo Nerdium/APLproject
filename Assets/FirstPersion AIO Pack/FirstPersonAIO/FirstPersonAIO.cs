@@ -880,7 +880,7 @@ public class FirstPersonAIO : MonoBehaviour {
             t.playerCamera = (Camera)EditorGUILayout.ObjectField(new GUIContent("Player Camera", "Camera attached to this controller"),t.playerCamera,typeof(Camera),true);
             if(!t.playerCamera){EditorGUILayout.HelpBox("A Camera is required for operation.",MessageType.Error);}
             t.enableCameraShake = EditorGUILayout.ToggleLeft(new GUIContent("Enable Camera Shake?", "Call this Coroutine externally with duration ranging from 0.01 to 1, and a magnitude of 0.01 to 0.5."), t.enableCameraShake);
-            t.lockAndHideCursor = EditorGUILayout.ToggleLeft(new GUIContent("Lock and Hide Cursor","For debuging or if You don't plan on having a pause menu or quit button."),t.lockAndHideCursor);
+            t.lockAndHideCursor = EditorGUILayout.ToggleLeft(new GUIContent("Lock and Hide Cursor"),t.lockAndHideCursor);
             t.autoCrosshair = EditorGUILayout.ToggleLeft(new GUIContent("Auto Crosshair","Determines if a basic crosshair will be generated."),t.autoCrosshair);
             if(t.autoCrosshair){EditorGUI.indentLevel++; EditorGUILayout.BeginHorizontal(); EditorGUILayout.PrefixLabel(new GUIContent("Crosshair","Sprite to use as a crosshair."));t.Crosshair = (Sprite)EditorGUILayout.ObjectField(t.Crosshair,typeof(Sprite),false); EditorGUILayout.EndHorizontal(); EditorGUI.indentLevel--;}
             GUI.enabled = true;
@@ -895,12 +895,12 @@ public class FirstPersonAIO : MonoBehaviour {
             t.playerCanMove = EditorGUILayout.ToggleLeft(new GUIContent("Enable Player Movement","Determines if the player is allowed to move."),t.playerCanMove);
             GUI.enabled = t.playerCanMove;
             t.walkByDefault = EditorGUILayout.ToggleLeft(new GUIContent("Walk By Default","Determines if the default mode of movement is 'Walk' or 'Srpint'."),t.walkByDefault);
-            t.walkSpeed = EditorGUILayout.Slider(new GUIContent("Walk Speed","Determines how fast the player walks."),t.walkSpeed,0.1f,10);
+            t.walkSpeed = EditorGUILayout.Slider(new GUIContent("Walk Speed","Determines how fast the player walks."),t.walkSpeed,0.1f,50);
             t.sprintKey = (KeyCode)EditorGUILayout.EnumPopup(new GUIContent("Sprint Key","Determines what key needs to be pressed to enter a sprint"),t.sprintKey);
-            t.sprintSpeed = EditorGUILayout.Slider(new GUIContent("Sprint Speed","Determines how fast the player sprints."),t.sprintSpeed,0.1f,20);
+            t.sprintSpeed = EditorGUILayout.Slider(new GUIContent("Sprint Speed","Determines how fast the player sprints."),t.sprintSpeed,0.1f,100);
             t.canJump = EditorGUILayout.ToggleLeft(new GUIContent("Can Player Jump?","Determines if the player is allowed to jump."),t.canJump);
             GUI.enabled = t.playerCanMove && t.canJump; EditorGUI.indentLevel++;
-            t.jumpPower = EditorGUILayout.Slider(new GUIContent("Jump Power","Determines how high the player can jump."),t.jumpPower,0.1f,15);
+            t.jumpPower = EditorGUILayout.Slider(new GUIContent("Jump Power","Determines how high the player can jump."),t.jumpPower,0.1f,45);
             t.canHoldJump = EditorGUILayout.ToggleLeft(new GUIContent("Hold Jump","Determines if the jump button needs to be pressed down to jump, or if the player can hold the jump button to automaticly jump every time the it hits the ground."),t.canHoldJump);
             EditorGUI.indentLevel --;GUI.enabled = t.playerCanMove;
             EditorGUILayout.Space();
@@ -936,7 +936,6 @@ public class FirstPersonAIO : MonoBehaviour {
                 t.advanced.gravityMultiplier = EditorGUILayout.Slider(new GUIContent("Gravity Multiplier","Determines how much the physics engine's gravitational force is multiplied."),t.advanced.gravityMultiplier,0.1f,5);
                 EditorGUILayout.Space();
                 t.advanced.maxSlopeAngle = EditorGUILayout.Slider(new GUIContent("Max Slope Angle","Determines the maximum angle the player can walk up. If left 0, the slope detection/limiting system will not be used."),t.advanced.maxSlopeAngle,0,55);
-                if(t.advanced.maxSlopeAngle>0){EditorGUILayout.HelpBox("For slops with angles greater than 55° should have a 90° (upright) collider positioned at the bottom of the slope. With out this, the player will have trouble jumping while touching both ground and the slope.",MessageType.Info);}
                 EditorGUILayout.Space();
                 t.advanced.maxStepHeight = EditorGUILayout.Slider(new GUIContent("Max Step Height","EXPERIMENTAL! Determines if a small ledge is a stair by comparing it to this value. Values over 0.5 produces odd results."),t.advanced.maxStepHeight,0,1);
             }

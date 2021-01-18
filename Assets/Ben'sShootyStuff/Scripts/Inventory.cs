@@ -95,8 +95,8 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
     }
 
     //Adds an item to inventory if possible
-    private bool AddToInventory(GameObject obj) {
-      Pickup pickup = obj.GetComponent<Pickup>();
+    private bool AddToInventory(GameObject obj2) {
+      Pickup pickup = obj2.GetComponent<Pickup>();
       int[] size = ItemSize.Get(pickup.type);
       int[] pos = GetOpenPosition(size);
       if(pos[0] == -1) {
@@ -105,12 +105,30 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
       print(size[0] + ", " + size[1]);
       int[] guiVals = new int[] {pos[0] * 100, pos[1] * 100, size[0] * 100, size[1] * 100};
 
-      ItemIcon objIcon = ItemIcon.Create(itemHolder, obj, guiVals, itemTextures[(int)(pickup.type)], ItemName.Get(pickup.type), nextIndex);
+      ItemIcon objIcon = ItemIcon.Create(itemHolder, obj2, guiVals, itemTextures[(int)(pickup.type)], ItemName.Get(pickup.type), nextIndex);
       //objIcon.gameObject.transform.parent = transform;
+            
+            if(equipped) {
+              MoveOrDrop(equipped); 
+              Destroy(hand.transform.GetChild(0).gameObject);
+            }
 
-      items.Add(objIcon);
-      AddToGrid(nextIndex, pos, size);
-      nextIndex++;
+            equipped = objIcon;
+            GameObject obj = Instantiate(itemPickups[(int)(objIcon.item)], hand);
+            obj.GetComponent<Rigidbody>().isKinematic = true;
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+            if(objIcon.item == Item.PISTOL || objIcon.item == Item.SHOTGUN || objIcon.item == Item.RIFLE) {
+              Gun gun = obj.AddComponent<Gun>();
+              gun.decalPrefab = decalPrefab;
+            }
+            BoxCollider[] colliders = obj.GetComponents<BoxCollider>();
+            foreach(BoxCollider collider in colliders) {
+              collider.enabled = false;
+            }
+            RemoveFromGrid(objIcon.index);
+            objIcon.gameObject.transform.SetParent(inventory.transform.Find("ActiveItemHolder"));
+            objIcon.transform.localPosition = new Vector3(-50.0f, 50.0f, 0.0f);
       return true;
     }
 
@@ -199,7 +217,7 @@ public class Inventory : MonoBehaviour, IPointerClickHandler{
 
     public void OnPointerClick(PointerEventData eventData) {
       ItemIcon item = eventData.pointerCurrentRaycast.gameObject.GetComponent<ItemIcon>();
-      //print(item);
+      print(item);
       if(item) {
         if(eventData.button == PointerEventData.InputButton.Right) {
           DropItem(item);

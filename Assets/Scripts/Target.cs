@@ -22,7 +22,7 @@ public class Target : MonoBehaviour {
             StartCoroutine(Respawn());
         } else {
             kills++;
-            print(canvas.transform.Find("Text").GetComponent<Text>().text = "Kills: " + kills + "/10";
+            canvas.transform.Find("Text").GetComponent<Text>().text = "Kills: " + kills + "/10";
             //.Find("Text").GetComponent<Text>().text =
             if(kills == 10) {
 

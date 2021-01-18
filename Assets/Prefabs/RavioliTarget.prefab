@@ -337,7 +337,7 @@ GameObject:
   - component: {fileID: 2380034028378350427}
   - component: {fileID: 2380034028378350430}
   m_Layer: 0
-  m_Name: ravioli
+  m_Name: RavioliTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -405,6 +405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6330f63f266ef004cbef9bf8e259e76c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
   health: 50
   respawn: 0
 --- !u!1 &4258634072730882330

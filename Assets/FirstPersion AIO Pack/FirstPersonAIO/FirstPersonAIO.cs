@@ -65,6 +65,8 @@ public class FirstPersonAIO : MonoBehaviour {
     public bool useStamina = true;
     public float staminaDepletionSpeed = 5f;
     public float staminaLevel = 50;
+    public float hungerDepletionSpeed = 5f;
+    public float hungerLevel = 500;
     public float speed;
     public float staminaInternal;
     internal float walkSpeedInternal;
@@ -247,6 +249,19 @@ public class FirstPersonAIO : MonoBehaviour {
                 StaminaMeterBG.color = new Color(0,0,0,0);
                 StaminaMeter.rectTransform.sizeDelta = new Vector2(250,6);
                 StaminaMeter.color = new Color(0,0,0,0);
+		///ah
+                HungerMeterBG = new GameObject("HunerMeter").AddComponent<Image>();
+                HungerMeter = new GameObject("Meter").AddComponent<Image>();
+                HungerMeter.transform.SetParent(StaminaMeterBG.transform);
+                HungerMeterBG.transform.SetParent(canvas.transform);
+                HungerMeterBG.transform.position = Vector3.zero;
+                HungerMeterBG.rectTransform.anchorMax = new Vector2(1,0);
+                HungerMeterBG.rectTransform.anchorMin = new Vector2(1,0);
+                HungerMeterBG.rectTransform.anchoredPosition = new Vector2(0,15);
+                HungerMeterBG.rectTransform.sizeDelta = new Vector2(250,6);
+                HungerMeterBG.color = new Color(100,20,20,0);
+                HungerMeter.rectTransform.sizeDelta = new Vector2(250,6);
+                HungerMeter.color = new Color(0,0,0,0);
             }
         }
         cameraStartingPosition = playerCamera.transform.localPosition;

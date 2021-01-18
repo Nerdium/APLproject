@@ -247,6 +247,7 @@ public class FirstPersonAIO : MonoBehaviour {
                 StaminaMeterBG.color = new Color(0,0,0,0);
                 StaminaMeter.rectTransform.sizeDelta = new Vector2(250,6);
                 StaminaMeter.color = new Color(0,0,0,0);
+		
             }
         }
         cameraStartingPosition = playerCamera.transform.localPosition;

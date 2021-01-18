@@ -49,7 +49,7 @@ public class Gun : MonoBehaviour {
             points.Add(rayOrigin);
 
             RaycastHit hit;
-            if(Physics.Raycast(rayOrigin, direction, out hit, range)) {
+            if(Physics.Raycast(rayOrigin, direction, out hit)) {
                 
                     GameObject decalObject = Instantiate(decalPrefab, hit.point + (hit.normal * 0.0025f), Quaternion.FromToRotation(Vector3.up, hit.normal));
                     decalObject.transform.SetParent(hit.transform, true);
